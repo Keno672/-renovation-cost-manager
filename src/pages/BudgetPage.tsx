@@ -1,0 +1,21 @@
+import { calculateSummary, formatCurrency, itemProjectedCost } from '../lib/costs'
+import type { Project } from '../types'
+import { PageHeader } from '../components/PageHeader'
+
+interface BudgetPageProps { project: Project }
+
+export function BudgetPage({ project }: BudgetPageProps) {
+  const summary = calculateSummary(project.workItems)
+  const projected = summary.actualTotal + summary.remainingProjectedCost
+  const coverage = summary.estimatedTotal ? Math.min(100, summary.quotedTotal / summary.estimatedTotal * 100) : 0
+  return (
+    <div>
+      <PageHeader eyebrow="Cost control" title="Budget" description="Compare the first estimate with live quotes, committed spend and the latest projected outcome." actions={<button type="button" onClick={() => window.print()} className="btn-secondary">Print summary</button>} />
+      <section className="grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+        <article className="rounded-2xl bg-evergreen p-6 text-white shadow-soft sm:p-8"><p className="text-xs font-bold uppercase tracking-[.14em] text-white/50">Latest projection</p><p className="mt-3 text-4xl font-bold tabular-nums sm:text-5xl">{formatCurrency(projected)}</p><p className="mt-3 max-w-md text-sm leading-6 text-white/55">Uses actual cost where entered, then quoted cost, then the current estimate for everything else.</p><div className="mt-8 grid grid-cols-2 gap-5 border-t border-white/10 pt-6"><div><p className="text-xs text-white/45">Spent to date</p><p className="mt-1 text-xl font-bold">{formatCurrency(summary.actualTotal)}</p></div><div><p className="text-xs text-white/45">Still projected</p><p className="mt-1 text-xl font-bold">{formatCurrency(summary.remainingProjectedCost)}</p></div></div></article>
+        <article className="panel p-6 sm:p-8"><p className="text-xs font-bold uppercase tracking-[.14em] text-clay">Quote coverage</p><div className="mt-3 flex items-end justify-between"><p className="text-4xl font-bold tabular-nums">{coverage.toFixed(0)}%</p><p className="text-sm text-ink/45">of estimate quoted</p></div><div className="mt-5 h-3 overflow-hidden rounded-full bg-mist"><div className="h-full rounded-full bg-clay transition-all" style={{ width: `${coverage}%` }} /></div><dl className="mt-7 space-y-3 text-sm"><div className="flex justify-between"><dt className="text-ink/50">Original estimate</dt><dd className="font-bold tabular-nums">{formatCurrency(summary.estimatedTotal)}</dd></div><div className="flex justify-between"><dt className="text-ink/50">Quotes received</dt><dd className="font-bold tabular-nums">{formatCurrency(summary.quotedTotal)}</dd></div><div className="flex justify-between"><dt className="text-ink/50">Unquoted estimate</dt><dd className="font-bold tabular-nums">{formatCurrency(Math.max(0, summary.estimatedTotal - summary.quotedTotal))}</dd></div></dl></article>
+      </section>
+      <section className="panel mt-6 overflow-hidden"><div className="border-b border-black/5 px-5 py-4"><h2 className="font-display text-xl">Trade budget</h2></div><div className="divide-y divide-black/5">{project.tradeSections.map((trade) => { const items = project.workItems.filter((item) => item.tradeSectionId === trade.id); const projection = items.reduce((sum, item) => sum + itemProjectedCost(item), 0); const spent = items.reduce((sum, item) => sum + item.actualCost, 0); return <div key={trade.id} className="grid grid-cols-[1fr_auto] gap-3 px-5 py-4 sm:grid-cols-[1fr_130px_130px]"><div className="flex min-w-0 items-center gap-3"><span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: trade.colour }} /><span className="truncate text-sm font-semibold">{trade.name}</span></div><div className="text-right"><span className="sm:hidden text-[10px] uppercase text-ink/40">Projected </span><span className="text-sm font-bold tabular-nums">{formatCurrency(projection)}</span></div><div className="hidden text-right sm:block"><span className="text-sm tabular-nums text-ink/55">{formatCurrency(spent)}</span></div></div>})}</div><div className="hidden grid-cols-[1fr_130px_130px] bg-mist/35 px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-ink/40 sm:grid"><span>Trade</span><span className="text-right">Projected</span><span className="text-right">Spent</span></div></section>
+    </div>
+  )
+}

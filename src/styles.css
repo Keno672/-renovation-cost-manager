@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color: #1d2925; background: #f6f4ee; font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(197, 104, 69, .28); outline-offset: 2px; }
+input[type='number'] { font-variant-numeric: tabular-nums; }
+
+@layer components {
+  .panel { @apply rounded-2xl border border-black/5 bg-white shadow-soft; }
+  .field { @apply min-h-11 w-full rounded-xl border border-black/10 bg-white px-3.5 text-[15px] text-ink outline-none transition focus:border-clay/60 focus:ring-2 focus:ring-clay/10; }
+  .label { @apply mb-1.5 block text-xs font-bold uppercase tracking-[0.08em] text-ink/55; }
+  .btn-primary { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-evergreen px-4 text-sm font-bold text-white transition hover:bg-[#215548] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-secondary { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-4 text-sm font-bold text-ink transition hover:bg-mist/50; }
+}
+
+@media print {
+  nav, aside, button, .no-print { display: none !important; }
+  main { padding: 0 !important; }
+  body { background: white; }
+  .panel { box-shadow: none; break-inside: avoid; }
+}
