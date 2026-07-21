@@ -1,9 +1,11 @@
 import { BarChart3 } from 'lucide-react'
+import type { SyncStatus } from '../hooks/useProject'
 import { pages, type PageId } from './navigationConfig'
+import { SyncIndicator } from './SyncIndicator'
 
-interface NavigationProps { activePage: PageId; projectName: string; onNavigate: (page: PageId) => void }
+interface NavigationProps { activePage: PageId; projectName: string; syncStatus: SyncStatus; onNavigate: (page: PageId) => void }
 
-export function Navigation({ activePage, projectName, onNavigate }: NavigationProps) {
+export function Navigation({ activePage, projectName, syncStatus, onNavigate }: NavigationProps) {
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-evergreen p-5 text-white lg:flex">
@@ -22,11 +24,11 @@ export function Navigation({ activePage, projectName, onNavigate }: NavigationPr
             </button>
           ))}
         </nav>
-        <div className="mt-auto border-t border-white/10 pt-5 text-xs leading-5 text-white/40">Saved privately in this browser.<br />Version 1.0</div>
+        <div className="mt-auto rounded-xl bg-white px-3 py-2.5"><SyncIndicator status={syncStatus} /></div>
       </aside>
 
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-black/5 bg-paper/90 px-4 backdrop-blur lg:hidden">
-        <div className="flex items-center gap-2.5"><span className="grid h-9 w-9 place-items-center rounded-xl bg-evergreen text-white"><BarChart3 size={19} /></span><div><p className="font-display leading-none">Renovation Ledger</p><p className="mt-1 max-w-44 truncate text-[10px] font-bold uppercase tracking-wider text-ink/40">{projectName}</p></div></div>
+        <div className="flex items-center gap-2.5"><span className="grid h-9 w-9 place-items-center rounded-xl bg-evergreen text-white"><BarChart3 size={19} /></span><div><p className="font-display leading-none">Renovation Ledger</p><p className="mt-1 max-w-40 truncate text-[10px] font-bold uppercase tracking-wider text-ink/40">{projectName}</p></div></div><SyncIndicator status={syncStatus} />
       </header>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-black/10 bg-white/95 px-1 pb-[max(.35rem,env(safe-area-inset-bottom))] pt-1.5 backdrop-blur lg:hidden" aria-label="Mobile navigation">
